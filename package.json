@@ -1,0 +1,42 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "description": "A Simple rest api implemetation in node js with mongo db",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "test": "mocha server/**/*.test.js",
+    "test-watch": "nodemon --exec 'npm test'"
+  },
+  "engines": {
+    "node": "10.20.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/santanu12saha/node-todo-api.git"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "api",
+    "mongodb"
+  ],
+  "author": "Santanu Saha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/santanu12saha/node-todo-api/issues"
+  },
+  "homepage": "https://github.com/santanu12saha/node-todo-api#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mongodb": "^3.5.7",
+    "mongoose": "^5.9.15"
+  },
+  "devDependencies": {
+    "expect": "^1.20.2",
+    "mocha": "^7.2.0",
+    "nodemon": "^2.0.4",
+    "supertest": "^4.0.2"
+  }
+}
