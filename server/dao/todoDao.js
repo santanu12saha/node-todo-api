@@ -35,10 +35,32 @@ var fetchTodoById = (id) => {
     });
 };
 
+var deleteTodoById = (id) => {
+    return new Promise((resolve, reject) => {
+        Todo.findByIdAndDelete(id).then((todo) => {
+            resolve(todo);
+        }, (err) => {
+            reject(err);
+        });
+    });
+};
+
+var updateTodoById = (id, todo) => {
+    return new Promise((resolve, reject) => {
+        Todo.findByIdAndUpdate(id, {$set: todo}, {new: true}).then((todo) => {
+            resolve(todo);
+        },(err) => {
+            reject(err);
+        });
+    });
+};
+
 module.exports = {
     insertTodo,
     fetchAllTodos,
-    fetchTodoById
+    fetchTodoById,
+    deleteTodoById,
+    updateTodoById
 }
 
 

@@ -33,8 +33,30 @@ var getTodoById = (id) => {
     });
 };
 
+var removeTodoById = (id) => {
+    return new Promise((resolve, reject) => {
+        todoDao.deleteTodoById(id).then((result) => {
+            resolve(result);
+        }, (err) => {
+            reject(err);
+        });
+    });
+};
+
+var updateTodoById = (id, todo) => {
+    return new Promise((resolve, reject) => {
+        todoDao.updateTodoById(id, todo).then((result) => {
+            resolve(result);
+        }, (err) => {
+            reject(err);
+        })
+    });
+};
+
 module.exports = {
     saveTodo,
     getAllTodos,
-    getTodoById
+    getTodoById,
+    removeTodoById,
+    updateTodoById
 }
