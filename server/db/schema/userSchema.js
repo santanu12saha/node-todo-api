@@ -1,6 +1,8 @@
 const mongoose = require('../mongo-db').getMongoose();
 const validator = require('validator');
 const uniqueValidator = require('mongoose-unique-validator');
+const _ = require('lodash');
+const jwt = require('jsonwebtoken');
 
 const userScheme = new mongoose.Schema({
     email: {
@@ -33,5 +35,44 @@ const userScheme = new mongoose.Schema({
 });
 
 userScheme.plugin(uniqueValidator, { message: 'User email already exists.'});
+
+userScheme.methods.toJSON = function () {
+    var user = this;
+    var userObject = user.toObject();
+
+    return _.pick(userObject, ['_id', 'email']);
+};
+
+userScheme.methods.generateAuthToken = function () {
+    var user = this;
+    var access = 'auth';
+    var token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
+
+    user.tokens.push({access, token});
+    return new Promise((resolve, reject) => {
+        user.save().then(() => {
+            resolve(token);
+        }).catch((err) => {
+            reject(err);
+        });
+    });    
+};
+
+userScheme.statics.findByToken = function (token) {
+    var user = this;
+    var decoded;
+
+    try {
+        decoded = jwt.verify(token, 'abc123');
+    } catch (e) {
+        return Promise.reject();
+    }
+
+    return user.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    });
+}
 
 module.exports = userScheme;

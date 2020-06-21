@@ -10,6 +10,17 @@ var saveUser = (userRequest) => {
     });
 };
 
+var getUserByToken = (token) => {
+    return new Promise((resolve, reject) => {
+        userDao.findUserByToken(token).then((result) => {
+            resolve(result);
+        }, (err) => {
+            reject(err);
+        })
+    });
+};
+
 module.exports = {
-    saveUser
+    saveUser,
+    getUserByToken
 }
