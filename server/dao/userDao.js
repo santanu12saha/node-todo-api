@@ -1,4 +1,5 @@
 const User = require('../db/model/user');
+const { reject } = require('lodash');
 
 getNewUser = (user) => {
     return new User(user);
@@ -27,7 +28,22 @@ var findUserByToken = (token) => {
     });
 };
 
+var findUserByCredentials = (email, password) => {
+    return new Promise((resolve, reject) => {
+        var u = null;
+        User.findByCredentials(email, password).then((user) => {
+            u = user;
+            return user.generateAuthToken();
+        }).then((token) => {
+            resolve({user : u, token});
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
+
 module.exports = {
     insertUser,
-    findUserByToken
+    findUserByToken,
+    findUserByCredentials
 }

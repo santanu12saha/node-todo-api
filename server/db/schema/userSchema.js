@@ -4,6 +4,7 @@ const uniqueValidator = require('mongoose-unique-validator');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const { isError } = require('lodash');
 
 const userScheme = new mongoose.Schema({
     email: {
@@ -73,6 +74,24 @@ userScheme.statics.findByToken = function (token) {
         '_id': decoded._id,
         'tokens.token': token,
         'tokens.access': 'auth'
+    });
+};
+
+userScheme.statics.findByCredentials = function(email, password) {
+    var User = this;
+    return User.findOne({email}).then((user) => {
+        if(!user) {
+            return new Promise.reject();
+        }
+        return new Promise((resolve, reject) => {
+            bcrypt.compare(password, user.password, (err, res) => {
+                if(res){
+                    resolve(user);
+                }else{
+                    reject();
+                }
+            });
+        });
     });
 };
 
