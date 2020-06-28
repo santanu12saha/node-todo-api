@@ -3,11 +3,7 @@ const request = require('supertest');
 
 const { app } = require('../server');
 const User = require('../db/model/user');
-const { users, populateUsers } = require('./seed/seed');
-const { describe } = require('mocha');
-const user = require('../db/model/user');
-
-beforeEach(populateUsers);
+const { users } = require('./seed/seed');
 
 describe('GET /users/me', () => {
     it('should return user if authenticated', (done) => {
@@ -102,7 +98,7 @@ describe('POST /users/login', () => {
                 }
 
                 User.findById(users[1]._id).then((user) => {
-                    expect(user.tokens[0]).toInclude({
+                    expect(user.tokens[1]).toInclude({
                         access: 'auth',
                         token: res.header['x-auth']
                     });
@@ -128,7 +124,7 @@ describe('POST /users/login', () => {
                 }
 
                 User.findById(users[1]._id).then((user) => {
-                    expect(user.tokens.length).toBe(0);
+                    expect(user.tokens.length).toBe(1);
                     done();
                 }).catch((e) => done(e));
             });

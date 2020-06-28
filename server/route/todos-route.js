@@ -3,13 +3,14 @@ const {ObjectID} = require('mongodb');
 const _ = require('lodash');
 const todoRouter = express.Router();
 const todoService = require('../service/todoService');
+const {authenticate} = require('../middleware/authenticate');
 
 todoRouter.use((req, res, next) => {
     console.log(`Todo Api Request Time: ${req.originalUrl}`, new Date().toString());
     next();
 });
 
-todoRouter.post('/', (req, res) => {
+todoRouter.post('/', authenticate, (req, res) => {
     todoService.saveTodo(req).then((todo) => {
         res.send(todo);
     }, (err) => {
@@ -17,20 +18,20 @@ todoRouter.post('/', (req, res) => {
     });
 });
 
-todoRouter.get('/', (req, res) => {
-    todoService.getAllTodos().then((todos) => {
+todoRouter.get('/', authenticate, (req, res) => {
+    todoService.getAllTodos(req).then((todos) => {
         res.send({todos});
     }, (err) => {
         res.status(400).send(err);
     });
 });
 
-todoRouter.get('/:id', (req, res) => {
+todoRouter.get('/:id', authenticate, (req, res) => {
     var id = req.params.id;
     if(!ObjectID.isValid(id)){
         return res.status(404).send();
     }
-    todoService.getTodoById(id).then((todo) => {
+    todoService.getTodoById(id, req.user._id).then((todo) => {
         if(!todo){
             return res.status(404).send();
         }
@@ -40,12 +41,12 @@ todoRouter.get('/:id', (req, res) => {
     });
 });
 
-todoRouter.delete('/:id', (req, res) => {
+todoRouter.delete('/:id', authenticate, (req, res) => {
     var id = req.params.id;
     if(!ObjectID.isValid(id)){
         return res.status(404).send();
     }
-    todoService.removeTodoById(id).then((todo) => {
+    todoService.removeTodoById(id, req.user.id).then((todo) => {
         if(!todo){
             return res.status(404).send();
         }
@@ -55,7 +56,7 @@ todoRouter.delete('/:id', (req, res) => {
     });
 });
 
-todoRouter.patch('/:id', (req, res) => {
+todoRouter.patch('/:id', authenticate, (req, res) => {
     var id = req.params.id;
     var body = _.pick(req.body, ['text', 'completed']);
 
@@ -69,7 +70,7 @@ todoRouter.patch('/:id', (req, res) => {
         body.completed = false;
         body.completedAt = null;
     }
-    todoService.updateTodoById(id, body).then((todo) => {
+    todoService.updateTodoById(id, req.user._id, body).then((todo) => {
         if(!todo){
             return res.status(404).send();
         }

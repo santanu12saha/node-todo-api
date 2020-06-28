@@ -2,7 +2,8 @@ const todoDao = require('../dao/todoDao');
 
 var saveTodo = (todoRequest) => {
     var todo = {
-        text: todoRequest.body.text
+        text: todoRequest.body.text,
+        _creator: todoRequest.user._id
     };
     return new Promise((resolve, reject) => {
         todoDao.insertTodo(todo).then((result) => {
@@ -13,9 +14,9 @@ var saveTodo = (todoRequest) => {
     });
 };
 
-var getAllTodos = () => {
+var getAllTodos = (req) => {
     return new Promise((resolve, reject) => {
-        todoDao.fetchAllTodos().then((result) => {
+        todoDao.fetchAllTodos(req.user._id).then((result) => {
             resolve(result);
         }, (err) => {
             reject(err);
@@ -23,9 +24,9 @@ var getAllTodos = () => {
     });
 };
 
-var getTodoById = (id) => {
+var getTodoById = (id, userId) => {
     return new Promise((resolve, reject) => {
-        todoDao.fetchTodoById(id).then((result) => {
+        todoDao.fetchTodoById(id, userId).then((result) => {
             resolve(result);
         }, (err) => {
             reject(err);
@@ -33,9 +34,9 @@ var getTodoById = (id) => {
     });
 };
 
-var removeTodoById = (id) => {
+var removeTodoById = (id, userId) => {
     return new Promise((resolve, reject) => {
-        todoDao.deleteTodoById(id).then((result) => {
+        todoDao.deleteTodoById(id, userId).then((result) => {
             resolve(result);
         }, (err) => {
             reject(err);
@@ -43,9 +44,9 @@ var removeTodoById = (id) => {
     });
 };
 
-var updateTodoById = (id, todo) => {
+var updateTodoById = (id, userId, todo) => {
     return new Promise((resolve, reject) => {
-        todoDao.updateTodoById(id, todo).then((result) => {
+        todoDao.updateTodoById(id, userId, todo).then((result) => {
             resolve(result);
         }, (err) => {
             reject(err);

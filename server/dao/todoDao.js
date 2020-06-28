@@ -1,4 +1,5 @@
 const Todo = require('../db/model/todo');
+const user = require('../db/model/user');
 
 getNewTodo = (todo) => {
     return new Todo(todo);
@@ -15,9 +16,11 @@ var insertTodo = (todo) => {
     });
 };
 
-var fetchAllTodos = () => {
+var fetchAllTodos = (id) => {
     return new Promise((resolve, reject) => {
-        Todo.find({}).then((docs) => {
+        Todo.find({
+            _creator: id
+        }).then((docs) => {
             resolve(docs);
         }, (err) => {
             reject(err);
@@ -25,9 +28,12 @@ var fetchAllTodos = () => {
     });
 };
 
-var fetchTodoById = (id) => {
+var fetchTodoById = (id, userId) => {
     return new Promise((resolve, reject) => {
-        Todo.findById(id).then((todo) => {
+        Todo.findOne({
+            _id: id,
+            _creator: userId
+        }).then((todo) => {
             resolve(todo);
         }, (err) => {
             reject(err);
@@ -35,9 +41,12 @@ var fetchTodoById = (id) => {
     });
 };
 
-var deleteTodoById = (id) => {
+var deleteTodoById = (id, userId) => {
     return new Promise((resolve, reject) => {
-        Todo.findByIdAndDelete(id).then((todo) => {
+        Todo.findOneAndDelete({
+            _id: id,
+            _creator: userId
+        }).then((todo) => {
             resolve(todo);
         }, (err) => {
             reject(err);
@@ -45,9 +54,9 @@ var deleteTodoById = (id) => {
     });
 };
 
-var updateTodoById = (id, todo) => {
+var updateTodoById = (id, userId, todo) => {
     return new Promise((resolve, reject) => {
-        Todo.findByIdAndUpdate(id, {$set: todo}, {new: true}).then((todo) => {
+        Todo.findOneAndUpdate({_id: id, _creator: userId}, {$set: todo}, {new: true}).then((todo) => {
             resolve(todo);
         },(err) => {
             reject(err);
