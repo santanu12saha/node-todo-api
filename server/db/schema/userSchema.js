@@ -4,7 +4,6 @@ const uniqueValidator = require('mongoose-unique-validator');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { isError } = require('lodash');
 
 const userScheme = new mongoose.Schema({
     email: {
@@ -58,6 +57,15 @@ userScheme.methods.generateAuthToken = function () {
             reject(err);
         });
     });    
+};
+
+userScheme.methods.removeToken = function (token) {
+    var user = this;
+    return user.updateOne({
+        $pull: {
+            tokens: {token}
+        }
+    });
 };
 
 userScheme.statics.findByToken = function (token) {

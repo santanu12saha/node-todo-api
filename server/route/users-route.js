@@ -22,6 +22,14 @@ userRouter.get('/me', authenticate, (req, res) => {
     res.send(req.user);
 });
 
+userRouter.delete('/me/token', authenticate, (req, res) => {
+    userService.deleteToken(req.token, req.user).then(() => {
+        res.status(200).send();
+    }, () => {
+        res.status(400).send();
+    });
+});
+
 userRouter.post('/login', (req, res) => {
     var body = _.pick(req.body, ['email', 'password']);
     userService.loginUserByCredentials(body).then((result) => {

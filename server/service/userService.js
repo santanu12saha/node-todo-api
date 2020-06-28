@@ -30,8 +30,19 @@ var loginUserByCredentials = (body) => {
     });
 };
 
+var deleteToken = (token, user) => {
+    return new Promise((resolve, reject) => {
+        userDao.deleteToken(token, user).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject();
+        });
+    });
+};
+
 module.exports = {
     saveUser,
     getUserByToken,
-    loginUserByCredentials
+    loginUserByCredentials,
+    deleteToken
 }

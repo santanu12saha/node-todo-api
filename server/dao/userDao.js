@@ -1,5 +1,4 @@
 const User = require('../db/model/user');
-const { reject } = require('lodash');
 
 getNewUser = (user) => {
     return new User(user);
@@ -42,8 +41,19 @@ var findUserByCredentials = (email, password) => {
     });
 };
 
+var deleteToken = (token, user) => {
+    return new Promise((resolve, reject) => {
+        user.removeToken(token).then(() => {
+            resolve();
+        }).catch((err) => {
+            reject();
+        });
+    });
+};
+
 module.exports = {
     insertUser,
     findUserByToken,
-    findUserByCredentials
+    findUserByCredentials,
+    deleteToken
 }
