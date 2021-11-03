@@ -37,7 +37,7 @@
     "mongodb": "^3.5.7",
     "mongoose": "^5.9.15",
     "mongoose-unique-validator": "^2.0.3",
-    "validator": "^13.1.1"
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "expect": "^1.20.2",
